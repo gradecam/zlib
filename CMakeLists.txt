@@ -17,10 +17,15 @@ include(CheckIncludeFile)
 include(CheckCSourceCompiles)
 enable_testing()
 
-check_include_file(sys/types.h HAVE_SYS_TYPES_H)
-check_include_file(stdint.h    HAVE_STDINT_H)
-check_include_file(stddef.h    HAVE_STDDEF_H)
-
+if (NOT EMSCRIPTEN)
+    check_include_file(sys/types.h HAVE_SYS_TYPES_H)
+    check_include_file(stdint.h    HAVE_STDINT_H)
+    check_include_file(stddef.h    HAVE_STDDEF_H)
+else()
+    set(HAVE_SYS_TYPES_H 1)
+    set(HAVE_STDINT_H 1)
+    set(HAVE_STDDEF_H 1)
+endif()
 #
 # Check to see if we have large file support
 #
@@ -46,15 +51,23 @@ set(CMAKE_REQUIRED_DEFINITIONS) # clear variable
 #
 # Check for fseeko
 #
-check_function_exists(fseeko HAVE_FSEEKO)
-if(NOT HAVE_FSEEKO)
-    add_definitions(-DNO_FSEEKO)
+if(NOT EMSCRIPTEN)
+    check_function_exists(fseeko HAVE_FSEEKO)
+    if(NOT HAVE_FSEEKO)
+        add_definitions(-DNO_FSEEKO)
+    endif()
+else()
+    set(HAVE_FSEEKO 1)
 endif()
 
 #
 # Check for unistd.h
 #
-check_include_file(unistd.h Z_HAVE_UNISTD_H)
+if (NOT EMSCRIPTEN)
+    check_include_file(unistd.h Z_HAVE_UNISTD_H)
+else()
+    set(Z_HAVE_UNISTD_H 1)
+endif()
 
 if(MSVC)
     set(CMAKE_DEBUG_POSTFIX "d")
