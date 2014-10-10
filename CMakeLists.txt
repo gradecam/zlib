@@ -226,3 +226,8 @@ endif()
 
 set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
 set (ZLIB_LIBRARY zlibstatic PARENT_SCOPE)
+
+if( ${WIN32} AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    MESSAGE("Compiling zlib 64 bit")
+	set_target_properties(zlibstatic PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
+endif()
